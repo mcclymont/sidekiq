@@ -235,6 +235,22 @@ class TestFake < Sidekiq::Test
       assert_equal 1, SecondWorker.count
     end
 
+    describe 'drain_all' do
+      it 'does not cause an infinite loop after using .jobs.clear' do
+        FirstWorker.perform_async
+
+        FirstWorker.jobs.clear
+        Timeout.timeout(5) { Sidekiq::Worker.drain_all }
+      end
+
+      it 'does not cause an infinite loop after using .clear' do
+        FirstWorker.perform_async
+
+        FirstWorker.clear
+        Timeout.timeout(5) { Sidekiq::Worker.drain_all }
+      end
+    end
+
     it 'drains jobs across all workers even when workers create new jobs' do
       Sidekiq::Worker.jobs.clear
       FirstWorker.count = 0
