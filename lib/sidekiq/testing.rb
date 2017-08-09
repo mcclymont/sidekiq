@@ -304,7 +304,7 @@ module Sidekiq
 
     class << self
       def jobs # :nodoc:
-        Queues.jobs_by_queue.values.flatten
+        Queues.jobs_by_worker.values.flatten
       end
 
       # Clear all queued jobs across all workers
